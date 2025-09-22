@@ -1,7 +1,7 @@
 # Ex-1-Developing-AI-Agent-with-PEAS-Description
-### Name:
+### Name: Mahesh N
 
-### Register Number:
+### Register Number: 2305001017
 
 ### Aim:
 To find the PEAS description for the given AI problem and develop an AI agent.
@@ -35,87 +35,152 @@ It’s a framework used to define the task environment for an AI agent clearly.
 5. Personal assistant (like Siri or Alexa)
 ```
 
-### VacuumCleanerAgent
+### Chess playing agent
 ### Algorithm:
-Step 1: Initialize:
+**Step 1:** Initialize
 
-Set agent’s location to A
+Set up chess board in starting position.
 
-Set environment dirt status for locations A and B (True = dirty, False = clean)
+Set agent’s side (White or Black).
 
-Step 2 :Repeat until all locations are clean (no dirt):
-a. Sense if current location has dirt
-b. If current location has dirt:
-- Suck dirt (set dirt status at current location to False)
-c. Else:
-- If current location is A, move right to location B
-- Else if current location is B, move left to location A
-d. Print the agent’s current location and dirt status (optional for debugging)
+Define evaluation function (to measure how good a board position is).
 
-Step 3: Stop when all locations are clean
+Set search depth (how many moves ahead to look).
 
-Step 4: Print total steps taken (optional)
+**Step 2 :** Game Loop (repeat until game ends)
+
+a. Sense/Perceive:
+
+Observe current board state.
+
+Generate all possible legal moves.
+
+b. Think/Decide:
+
+For each possible move:
+
+Simulate move on a copy of the board.
+
+Use Minimax with Alpha-Beta Pruning to explore opponent’s responses up to the chosen depth.
+
+Evaluate resulting positions using the evaluation function.
+
+Select the move with the best evaluation (maximize if agent’s turn, minimize if opponent’s).
+
+c. Act:
+
+Make the selected move on the real board.
+
+d. Print/Debug (optional):
+
+Show chosen move, current board state, and evaluation score.
+
+**Step 3:** Stop when game ends (Checkmate, Stalemate, or Draw).
+
+**Step 4:**
+Print result (Win, Lose, Draw).
+
+Print number of moves played.
 
 ### Program:
 ```
-class VacuumCleanerAgent:
-    def __init__(self):
-        # Initialize the agent's state (location and dirt status)
-        self.location = "A"  # Initial location (can be "A" or "B")
-        self.dirt_status = {"A": False, "B": False}  # Initial dirt status (False means no dirt)
+import random
 
-    def move_left(self):
-        # Move the agent to the left if possible
-        if self.location == "B":
-            self.location = "A"
+# Starting chess board
+board = [
+    ["r","n","b","q","k","b","n","r"],
+    ["p","p","p","p","p","p","p","p"],
+    [".",".",".",".",".",".",".","."],
+    [".",".",".",".",".",".",".","."],
+    [".",".",".",".",".",".",".","."],
+    [".",".",".",".",".",".",".","."],
+    ["P","P","P","P","P","P","P","P"],
+    ["R","N","B","Q","K","B","N","R"]
+]
 
-    def move_right(self):
-        # Move the agent to the right if possible
-        if self.location == "A":
-            self.location = "B"
+def print_board():
+    print("   a b c d e f g h")
+    for i, row in enumerate(board):
+        print(f"{8-i}  " + " ".join(row))
+    print()
 
-    def suck_dirt(self):
-        # Suck dirt in the current location if there is dirt
-        if self.dirt_status[self.location]:
-            self.dirt_status[self.location] = False
-            print(f"Sucked dirt in location {self.location}")
+def notation_to_pos(move):
+    col_map = "abcdefgh"
+    return 8-int(move[1]), col_map.index(move[0])
 
-    def do_nothing(self):
-        # Do nothing
-        pass
+def pos_to_notation(pos):
+    row,col = pos
+    col_map = "abcdefgh"
+    return f"{col_map[col]}{8-row}"
 
-    def perform_action(self, action):
-        # Perform the specified action
-        if action == "left":
-            self.move_left()
-        elif action == "right":
-            self.move_right()
-        elif action == "suck":
-            self.suck_dirt()
-        elif action == "nothing":
-            self.do_nothing()
+def get_moves(is_white):
+    moves = []
+    for r in range(8):
+        for c in range(8):
+            piece = board[r][c]
+            if piece == ".": 
+                continue
+            if is_white and piece.isupper() or (not is_white and piece.islower()):
+                for rr in range(8):
+                    for cc in range(8):
+                        if (rr,cc)!=(r,c) and board[rr][cc]=="." or (is_white and board[rr][cc].islower()) or (not is_white and board[rr][cc].isupper()):
+                            moves.append(((r,c),(rr,cc)))
+    return moves
+
+def make_move(start,end):
+    r1,c1=start; r2,c2=end
+    board[r2][c2]=board[r1][c1]
+    board[r1][c1]="."
+
+def game():
+    white_turn=True
+    print_board()
+    while True:
+        flat=sum(board,[])
+        if "K" not in flat:
+            print("Black wins! King captured.")
+            break
+        if "k" not in flat:
+            print("White wins! King captured.")
+            break
+
+        if white_turn:
+            move=input("Your move (e.g., e2 e4): ").split()
+            try:
+                start=notation_to_pos(move[0]); end=notation_to_pos(move[1])
+                make_move(start,end)
+            except:
+                print("Invalid input, try again."); continue
         else:
-            print("Invalid action")
+            moves=get_moves(False)
+            if not moves: 
+                print("Stalemate!"); break
+            start,end=random.choice(moves)
+            make_move(start,end)
+            print(f"AI plays {pos_to_notation(start)} {pos_to_notation(end)}")
 
-    def print_status(self):
-        # Print the current status of the agent
-        print(f"Location: {self.location}, Dirt Status: {self.dirt_status}")
+        print_board()
+        white_turn=not white_turn
 
-# Example usage:
-agent = VacuumCleanerAgent()
+game()
 
-
-# Move the agent, suck dirt, and do nothing
-
-agent.perform_action("left")
-agent.print_status()
-agent.perform_action("suck")
-agent.print_status()
-agent.perform_action("nothing")
-agent.print_status()
 ```
-### Sample Output:
+### Output:
 
-425810495-d1198ba7-da19-413b-9907-4844afae627f
+**chess board** 
+
+<img width="258" height="214" alt="image" src="https://github.com/user-attachments/assets/9dc95c5b-497d-4d75-89d5-7eb1ff5d7a56" />
+
+Moving from our side 
+
+<img width="397" height="237" alt="image" src="https://github.com/user-attachments/assets/c9df8860-b997-409a-8ba0-e089f1fab6a6" />
+
+Ai moves
+
+<img width="277" height="250" alt="image" src="https://github.com/user-attachments/assets/181860fa-5fcd-4d08-8a6d-a54f406d29eb" />
+
+
 
 ### Result:
+
+Thus , the program for Developing-AI-Agent-with-PEAS- chess board was implemented and executed successfully.

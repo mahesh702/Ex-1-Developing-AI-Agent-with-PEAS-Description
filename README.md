@@ -169,15 +169,18 @@ game()
 
 **chess board** 
 
-<img width="258" height="214" alt="image" src="https://github.com/user-attachments/assets/9dc95c5b-497d-4d75-89d5-7eb1ff5d7a56" />
+<img width="230" height="203" alt="image" src="https://github.com/user-attachments/assets/43a044e7-9a78-4bf0-b2a1-f1cb29db35f7" />
+
 
 Moving from our side 
 
-<img width="397" height="237" alt="image" src="https://github.com/user-attachments/assets/c9df8860-b997-409a-8ba0-e089f1fab6a6" />
+<img width="324" height="238" alt="image" src="https://github.com/user-attachments/assets/3c2e9191-e8f2-453d-8776-4892e173eb05" />
+
 
 Ai moves
 
-<img width="277" height="250" alt="image" src="https://github.com/user-attachments/assets/181860fa-5fcd-4d08-8a6d-a54f406d29eb" />
+<img width="274" height="234" alt="image" src="https://github.com/user-attachments/assets/9061719a-8404-41c4-b3a2-8ddc3849e797" />
+
 
 
 
